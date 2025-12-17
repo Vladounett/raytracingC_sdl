@@ -1,1 +1,0 @@
-gcc -Wall -Wextra -g raytracing.c `sdl2-config --cflags --libs`
