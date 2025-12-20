@@ -1,13 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
-#include "circles.h"
+#include "geometry.h"
+#include "const.h"
 
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 800
-#define MOVE_SPEED 4
-
-int main(){
+int main(int argc, char* argv[]){
 
     const SDL_Rect reset_rect = (SDL_Rect) {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 
@@ -16,8 +13,12 @@ int main(){
     SDL_Window* mainWindow = SDL_CreateWindow("Raytracing", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     SDL_Surface* mainSurface = SDL_GetWindowSurface(mainWindow);
 
-    Circle ray_circle = (Circle) {WINDOW_WIDTH/2, WINDOW_HEIGHT/2, 40};
-    Circle rayblocking_circle = (Circle) {WINDOW_WIDTH/2 + 300, WINDOW_HEIGHT/2, 100};
+    Circle ray_circle = (Circle) {WINDOW_WIDTH/2, WINDOW_HEIGHT/2, 40, atoi(argv[1]), NULL};
+    Circle rayblocking_circle = (Circle) {WINDOW_WIDTH/2 + 300, WINDOW_HEIGHT/2, 100, 0, NULL};
+    Circle rayblocking_circle2 = (Circle) {WINDOW_WIDTH/2 - 300, WINDOW_HEIGHT/2 + 200, 50, 0, NULL};
+
+    Circle_node firstCollider = (Circle_node){rayblocking_circle, NULL};
+    Circle_node secondCollider = (Circle_node){rayblocking_circle2, &firstCollider};
 
     short engine_is_running = 1;
     while(engine_is_running){
@@ -35,9 +36,12 @@ int main(){
             }
         }
 
+        GenerateCircleRays(&ray_circle);
+
         SDL_FillRect(mainSurface, &reset_rect, 0x00000000); //draw background black before drawing circles
         DrawCircle(mainSurface, ray_circle);
-        DrawCircle(mainSurface, rayblocking_circle);
+        DrawCircles(mainSurface, &secondCollider);
+        DrawRays(mainSurface, ray_circle.rays, ray_circle.rayNumber, WINDOW_WIDTH, WINDOW_HEIGHT, &secondCollider);
 
         SDL_UpdateWindowSurface(mainWindow);
         SDL_Delay(20);
