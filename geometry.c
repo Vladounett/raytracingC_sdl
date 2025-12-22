@@ -5,19 +5,26 @@
 
 void GenerateCircleRays(Circle* circle){
     circle->rays = calloc(circle->rayNumber, sizeof(Ray));
-    double angleByRayNumber = (double) 360 / (double) circle->rayNumber;
+    double angleByRayNumber = circle->eyeMaxAngle / (double) circle->rayNumber;
+    double startAngle = circle->eyeDirection - circle->eyeMaxAngle / 2.0;
 
     for(int i = 0; i < circle->rayNumber; i++){
-        double radiansAngle = (i * angleByRayNumber) * M_PI / (double) 180;
+        double radiansAngle = (i * angleByRayNumber + startAngle) * M_PI / (double) 180;
         circle->rays[i] = (Ray) {circle->x, circle->y, radiansAngle, cos(radiansAngle), -sin(radiansAngle)};
         //printf("angle in deg :: %f\n", i*angleByRayNumber);
         //printf("angle in radian :: %f\n", (i * angleByRayNumber) * M_PI / 180);
     }
 }
 
-void DrawRays(SDL_Surface* surface, Ray rays[], int rayNumber, int WINDOW_WIDTH, int WINDOW_HEIGHT, Circle_node* c_node){
+void MoveWithDirection(Circle* circle, int movingDir){
+    double rad = circle->eyeDirection * M_PI / 180.0;
+    circle->x += cos(rad) * movingDir;
+    circle->y += -sin(rad) * movingDir;
+}
+
+void DrawRays(SDL_Surface* surface, Ray rays[], int rayNumber, int WINDOW_WIDTH, int WINDOW_HEIGHT, Collider_node* c_node){
     
-    Circle_node* original_c_node = c_node;
+    Collider_node* original_c_node = c_node;
 
     for(int i = 0; i < rayNumber; i++){
         short xInScreen = 1;
@@ -78,9 +85,9 @@ void DrawCircle(SDL_Surface* surface, Circle circle){
     }
 }
 
-void DrawCircles(SDL_Surface* surface, Circle_node* c_node){
+void DrawCircles(SDL_Surface* surface, Collider_node* c_node){
     while(c_node){
-        Circle circle = c_node->circle;
+        CircleCollider circle = c_node->circle;
         int x = circle.radius;
         int y = 0;
         int p = 1 - circle.radius;

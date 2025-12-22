@@ -14,17 +14,25 @@ typedef struct{
     double x, y;
     double radius;
     int rayNumber;
+    double eyeDirection;
+    double eyeMaxAngle;
     Ray* rays;
 } Circle;
 
+typedef struct{
+    double x, y;
+    double radius;
+} CircleCollider;
+
 typedef struct Circle_node{
-    Circle circle;
+    CircleCollider circle;
     struct Circle_node* next;
-} Circle_node;
+} Collider_node;
 
 void DrawCircle(SDL_Surface* surface, Circle circle);
-void DrawCircles(SDL_Surface* surface, Circle_node* c_node);
-void DrawRays(SDL_Surface* surface, Ray rays[], int rayNumber, int WINDOW_WIDTH, int WINDOW_HEIGHT, Circle_node* c_node);
+void DrawCircles(SDL_Surface* surface, Collider_node* c_node);
+void DrawRays(SDL_Surface* surface, Ray rays[], int rayNumber, int WINDOW_WIDTH, int WINDOW_HEIGHT, Collider_node* c_node);
 void GenerateCircleRays(Circle* circle);
+void MoveWithDirection(Circle* circle, int movingDir);
 
 #endif
