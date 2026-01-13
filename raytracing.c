@@ -18,6 +18,11 @@ void clamp360(double* eyeDirection, int moving_speed){
 
 int main(int argc, char* argv[]){
 
+    if(argc != 3){
+        printf("Invalid arguments\n./a.out <rayNumber> <eyesMaxAngle>\n");
+        return 1;
+    }
+
     const SDL_Rect reset_rect = (SDL_Rect) {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 
     SDL_Init(SDL_INIT_VIDEO);
